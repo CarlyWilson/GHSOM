@@ -15,24 +15,27 @@
 #include <iostream>
 #include <MGWaveform.hh>
 
+#include <vector>
+
 using namespace std;
 
 Class MGWFSOMWindowAlign{
 	
 	public:
 		// Types will become more clear as class is completed
-		MGWFSOMWindowAlign(MGWaveform waveform, float sectionSize);// I'm assuming here that it takes the same input as MGWFSOMPreprocess?
-		float FindZeroCrossing(MGWaveform waveform);
+		MGWFSOMWindowAlign(MGWaveform waveform);
 		
-		void InterpolateandWindow(float fAbsoluteZeroCrossing);
+		void FindZeroCrossing();
+		void InterpolateandWindow();
 		void WindowVariance(float fWindowedWF);
 		
 
 	private:
 		// Type will become more obvious as class is made. Until then float will do.
+		const vector<double> fWFData;
+		size_t fWFVar;
+		size_t fAbsoluteZeroCrossing;
 		float fWindowedWF;
-		float fWFVar;
-		float fAbsoluteZeroCrossing;
 };
 
 #endif
