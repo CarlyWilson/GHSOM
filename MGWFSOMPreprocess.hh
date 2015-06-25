@@ -19,16 +19,16 @@ using namespace std;
 Class MGWFSOMPreprocess{
 	
 	public:
-		// Not entirly sure about regular tpes that this point. It'll become more clear as class is made
-		MGWFSOMPreprocess(MGWaveform waveform, float sectionSize);
-
-		float CalculateMeanandVariance(MGWaveform waveform, float sectionSize);
-		void CalculateOffsetandScale(float meanOneVarianceOne, float meanTwoVarianceTwo);// based off of Ben's powerpoint
+		MGWFSOMPreprocess(MGWaveform waveform, double sectionSize);
+		void CalculateMeanandVariance(MGWaveform waveform, double sectionSize);
+		void CalculateOffsetandScale(double meanOneVarianceOne, double meanTwoVarianceTwo);
 		void TransformOutofPlace(float fOffset, float fScale);
 
 	private:
-		// Types these should be will become more obvious as class is completed, float meanwhile
-		float fWFRegion;
+		vector<double> fWFData;
+		double fWFRegion;
+		double meanOneVarianceOne;
+		double meanTwoVarianceTwo;
 		float fWindowSize;
 		float fOffset;
 		float fScale;

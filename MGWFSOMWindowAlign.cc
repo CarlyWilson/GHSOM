@@ -10,34 +10,35 @@
 //-----------------------------------------------------------------------
 
 #include "MGWFSOMWindowAlign.hh"
+#include "MGWICubicSpline.hh"
 
 MGWFSOMWindowAlign::MGWFSOMWindowAlign(MGWaveform waveform){
-	fWFData = waveform->GetVectorData();
+	fWindowedWF = waveform->GetVectorData();
 }
 
 void MGWFSOMWindowAlign::FindZeroCrossing(){
 
-	int indexNeg = fWFData.size()/2;
+	int indexNeg = fWindowedWF.size()/2;
 	int indexPos = indexNeg;
 
-	if(fWFData.size() % 2 == 0){
+	if(fWindowedWF.size() % 2 == 0){
 		indexNeg = indexNeg - 1;
 	}
 
-	double trueMiddle = (fWFData[indexNeg] + fWFData[indexPos])/2;
+	double trueMiddle = (fWindowedWF[indexNeg] + fWindowedWF[indexPos])/2;
 
 	bool startsPositive = trueMiddle >= 0;
 	bool startsNegative = trueMiddle <= 0;
 
-	while((indexPos < fWFData.size()) && (indexNeg >= 0){
+	while((indexPos < fWindowedWF.size()) && (indexNeg >= 0){
 		if(startsNegative){
-			if(fWFData[indexPos] > 0){
+			if(fWindowedWF[indexPos] > 0){
 				fAbsoluteZeroCrossing = indexPos;
 				return;
 			}
 		}
 		else if(startsPositive){
-			if(fWFData[indexPos] < 0){
+			if(fWindowedWF[indexPos] < 0){
 				fAbsoluteZeroCrossing = indexPos;
 				return;
 			}
@@ -45,13 +46,13 @@ void MGWFSOMWindowAlign::FindZeroCrossing(){
 		indexPos++;
 
 		if(startsPositive){
-			if(fWFData[indexNeg] < 0){
+			if(fWindowedWF[indexNeg] < 0){
 				fAbsoluteZeroCrossing = indexNeg;
 				return;
 			}
 		}
 		else if(startsNegative){
-			if(fWFData[indexNeg] > 0){
+			if(fWindowedWF[indexNeg] > 0){
 				fAbsoluteZeroCrossing = indexNeg;
 				return;
 			}
@@ -61,7 +62,29 @@ void MGWFSOMWindowAlign::FindZeroCrossing(){
 }
 
 void MGWFSOMWindowAlign::InterpolateandWindow(){
+	//Interpolate the absolute zero crossing using linear interpolation
+	// Use a cubic splice interpolation
+	fWindowedWF->InterpolateAtPoint(fWFVar);
 }
 
-void MGWFSOMWindowAlign::WindowVariance(float fWindowedWF){
+void MGWFSOMWindowAlign::WindowVariance(){
+	
+	double variance = 0;
+	double mean = 0;
+	double sum = 0;
+	double temp = 0;
+
+	for(int i = 0; i < fWindowedWF.size(); i++){
+		sum += fWindowedWF[i];
+	}
+
+	mean = (sum/fWindowedWF.size());
+	
+	for(size_t i = 0; i < fWindowedWF.size(); i++){
+		temp += (fWindowedWF[i] - mean) * (fWindowedWF[i] - mean);
+	}
+
+	variance = (temp/fWindowedWF.size());
+
+	// Now scale by the variance...
 }

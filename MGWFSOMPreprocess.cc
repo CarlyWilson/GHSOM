@@ -10,14 +10,20 @@
 
 #include "MGWFSOMPreprocess.hh"
 
-MGWFSOMPreprocess::MGWFSOMPreprocess(MGWaveform waveform, float sectionSize){
+MGWFSOMPreprocess::MGWFSOMPreprocess(MGWaveform waveform, double sectionSize){
+	fWFData = waveform->GetVectorData();
+	fWFRegion = sectionSize;
 }
 
-MGWFSOMPreprocess::CalculateMeanandVariance(MGWaveform waveform, float sectionSize){
+MGWFSOMPreprocess::CalculateMeanandVariance(MGWaveform waveform, double sectionSize){
+	
 }
 
-MGWFSOMPreprocess::CalculateOffsetandScale(float meanOneVarianceOne, float meanTwoVarianceTwo){
+MGWFSOMPreprocess::CalculateOffsetandScale(double meanOneVarianceOne, double meanTwoVarianceTwo){
+	fOffset = (meanTwoVarianceTwo + meanOneVarianceOne)/2;
+	fScale = (meanTwoVarianceTwo - meanOneVarianceOne)/2;
 }
 
-MGWFSOMPreprocess::TransformOutofPlace(float fOffset, float fScale){
+MGWFSOMPreprocess::TransformOutofPlace(double fOffset, double fScale){
+	// There are a lot of different TransformOutofPlaces in MGDO. Need more information about what it needs to do so I can pick the right one?
 }
