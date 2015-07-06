@@ -26,12 +26,16 @@ Class MGWFSOMWindowAlign{
 		void FindZeroCrossing();
 		void InterpolateandWindow();
 		void WindowVariance();
+		void setMU(double muValue);
 		
 
 	private:
 		vector<double> fWindowedWF;
-		double fAbsoluteZeroCrossing;
 		double fWFVar;
+		double fLinInterp;
+		double fCubicSpline;
+		double mu;
+		size_t fAbsoluteZeroCrossing;
 };
 
 #endif

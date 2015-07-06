@@ -14,12 +14,13 @@
 
 MGWFSOMWindowAlign::MGWFSOMWindowAlign(MGWaveform waveform){
 	fWindowedWF = waveform->GetVectorData();
+	mu = 0.01 // should be between 0 and 1
 }
 
 void MGWFSOMWindowAlign::FindZeroCrossing(){
 
-	int indexNeg = fWindowedWF.size()/2;
-	int indexPos = indexNeg;
+	size_t indexNeg = fWindowedWF.size()/2;
+	size_t indexPos = indexNeg;
 
 	if(fWindowedWF.size() % 2 == 0){
 		indexNeg = indexNeg - 1;
@@ -62,14 +63,39 @@ void MGWFSOMWindowAlign::FindZeroCrossing(){
 }
 
 void MGWFSOMWindowAlign::InterpolateandWindow(){
-	//Interpolate the absolute zero crossing using linear interpolation
-	// Use a cubic splice interpolation
-	fWindowedWF->InterpolateAtPoint(fWFVar);
+	// Linear Interpolation
+	if(fWindowedWF[fAbsoluteZeroCrossing] > 0){
+		fLinInterp = fWindowedWF[fAbsoluteZeroCrossing]*(1 - mu) + fWindowedWF[fAbsoluteZeroCrossing + 1] * mu;
+	}
+	else{
+		fLinInterp = fWindowedWF[fAbsoluteZeroCrossing]*(1 - mu) + fWindowedWF[fAbsoluteZeroCrossing - 1] * mu;
+	}
+
+	// CubicSpline interpolation
+
+	double a0, a1, a2, a4, mu2;
+
+	if(fWindowedWF[fAbsoluteZeroCrossing] > 0){
+		a0 = fWindowedWF[fAbsoluteZeroCrossing + 3] - fWindowedWF[fAbsoluteZeroCrossing + 2] - fWindowedWF[fAbsoluteZeroCrossing] + fWindowedWF[fAbsoluteZeroCrossing + 1];
+		a1 = fWindowedWF[fAbsoluteZeroCrossing] - fWindowedWF[fAbsoluteZeroCrossing + 1] - a0;
+		a2 = fWindowedWF[fAbsoluteZeroCrossing + 2] - fWindowedWF[fAbsoluteZeroCrossing];
+		a3 = fWindowedWF[fAbsoluteZeroCrossing + 1]
+
+		fCubicSpline = a0*mu*mu2 + a1*mu2 + a2*mu + a3;
+	}
+	else{
+		a0 = fWindowedWF[fAbsoluteZeroCrossing - 3] - fWindowedWF[fAbsoluteZeroCrossing - 2] - fWindowedWF[fAbsoluteZeroCrossing] + fWindowedWF[fAbsoluteZeroCrossing - 1];
+		a1 = fWindowedWF[fAbsoluteZeroCrossing] - fWindowedWF[fAbsoluteZeroCrossing - 1] - a0;
+		a2 = fWindowedWF[fAbsoluteZeroCrossing - 2] - fWindowedWF[fAbsoluteZeroCrossing];
+		a3 = fWindowedWF[fAbsoluteZeroCrossing - 1]
+
+		fCubicSpline = a0*mu*mu2 + a1*mu2 + a2*mu + a3;
+	}
 }
 
 void MGWFSOMWindowAlign::WindowVariance(){
 	
-	double variance = 0;
+	fWFVar = 0;
 	double mean = 0;
 	double sum = 0;
 	double temp = 0;
@@ -84,7 +110,11 @@ void MGWFSOMWindowAlign::WindowVariance(){
 		temp += (fWindowedWF[i] - mean) * (fWindowedWF[i] - mean);
 	}
 
-	variance = (temp/fWindowedWF.size());
+	fWFVar = (temp/fWindowedWF.size());
 
 	// Now scale by the variance...
+}
+
+void MGWFSOMWindowAlign::setMU(double muValue){
+	mu = muValue;
 }
