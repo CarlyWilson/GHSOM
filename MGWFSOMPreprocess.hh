@@ -27,8 +27,8 @@ Class MGWFSOMPreprocess{
 	private:
 		vector<double> fWFData;
 		double fWFRegion;
-		double meanOneVarianceOne;
-		double meanTwoVarianceTwo;
+		double fVariance;
+		double fMean;
 		float fWindowSize;
 		float fOffset;
 		float fScale;
