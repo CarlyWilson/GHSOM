@@ -12,7 +12,7 @@
 #define MGWFSOMPREPROCESS_HH_
 
 #include <iostream>
-#include <MGWaveform.hh>
+#include <MGTWaveform.hh>
 
 using namespace std;
 
@@ -21,19 +21,19 @@ Class MGWFSOMPreprocess{
 	public:
 		MGWFSOMPreprocess(MGWaveform waveform, double sectionSize);
 		void CalculateMeanandVariance(MGWaveform waveform, double sectionSize);
-		void CalculateOffsetandScale(double meanOneVarianceOne, double meanTwoVarianceTwo);
-		void TransformOutofPlace(float fOffset, float fScale);
+		void CalculateOffsetandScale();
+		void TransformOutofPlace(double fOffset, double fScale);
 
 	private:
 		vector<double> fWFData;
+		MGWaveform fWaveform;
+		vector<double> fMeanVariance;
 		double fWFRegion;
-		double fVariance;
-		double fMean;
-		float fWindowSize;
-		float fOffset;
-		float fScale;
-		float fBaselineRMS;
-		float fFlattopRMS;
+		double fWindowSize;
+		double fOffset;
+		double fScale;
+		double fBaselineRMS;
+		double fFlattopRMS;
 };
 
 #endif
